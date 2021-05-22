@@ -137,7 +137,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                     print("dentro flase")
                     return  False
                 else:
-                    max_p_value(F_stats)                  
+                    max_p_value(results[1])                  
 
         return True
 
@@ -185,7 +185,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                          (M1_no_diag[val] + M2_no_diag[val]))
             if Chi > chi_2_quantile:
                 return False, math.inf
-        return True, F_stats
+        return True, F_stats[val]
         
     def compute_thumb_value(self, parent_val, child_val, parent_set_vals):
         """Compute the value to test against the thumb_threshold.
