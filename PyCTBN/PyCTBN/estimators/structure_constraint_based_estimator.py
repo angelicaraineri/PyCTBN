@@ -1,4 +1,4 @@
-
+import math
 import itertools
 import json
 import typing
@@ -27,6 +27,7 @@ import concurrent.futures
 import multiprocessing
 from multiprocessing import Pool
 
+max_value = -math.inf
 
 class StructureConstraintBasedEstimator(StructureEstimator):
     """
@@ -51,14 +52,21 @@ class StructureConstraintBasedEstimator(StructureEstimator):
 
     def __init__(self, sample_path: SamplePath, exp_test_alfa: float, chi_test_alfa: float,known_edges: typing.List= [],
                  thumb_threshold:int = 25):
-        print("dentro init")
+        print("dentro CIAO")
         super().__init__(sample_path,known_edges)
         self._exp_test_sign = exp_test_alfa
         self._chi_test_alfa = chi_test_alfa
         self._thumb_threshold = thumb_threshold
         self._cache = Cache()
 
-    def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
+   def max_p_value(p_value):
+       print("p value da controllare: ", p_value)
+       print("p value prima: ", max_value)
+       if(p_value > max_value):
+           max_value = p_value
+       print("p value dopo: ", max_value)
+
+   def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
                       tot_vars_count: int, parent_indx, child_indx) -> bool:
         """Performs a complete independence test on the directed graphs G1 = {test_child U parent_set}
         G2 = {G1 U test_parent} (added as an additional parent of the test_child).
@@ -124,8 +132,12 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         for cim1, p_comb in zip(sofc1.actual_cims, sofc1.p_combs):
             cond_cims = sofc2.filter_cims_with_mask(cims_filter, p_comb)
             for cim2 in cond_cims:
-                if not self.independence_test(child_states_numb, cim1, cim2, thumb_value, parent_indx, child_indx):
-                    return False
+                results = self.independence_test(child_states_numb, cim1, cim2, thumb_value, parent_indx, child_indx)
+                if not results[0]:
+                    return  False
+                else:
+                    max_p_value(F_stats)                  
+
         return True
 
     def independence_test(self, child_states_numb: int, cim1: ConditionalIntensityMatrix,
@@ -171,8 +183,8 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             Chi = np.sum(np.power(Ks[val] * M2_no_diag[val] - Ls[val] *M1_no_diag[val], 2) /
                          (M1_no_diag[val] + M2_no_diag[val]))
             if Chi > chi_2_quantile:
-                return False
-        return True
+                return False, math.inf
+        return True, F_stats
         
     def compute_thumb_value(self, parent_val, child_val, parent_set_vals):
         """Compute the value to test against the thumb_threshold.
