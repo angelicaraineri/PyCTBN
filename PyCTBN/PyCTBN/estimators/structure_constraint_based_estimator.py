@@ -134,6 +134,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             for cim2 in cond_cims:
                 results = self.independence_test(child_states_numb, cim1, cim2, thumb_value, parent_indx, child_indx)
                 if not results[0]:
+                    print("dentro flase")
                     return  False
                 else:
                     max_p_value(F_stats)                  
