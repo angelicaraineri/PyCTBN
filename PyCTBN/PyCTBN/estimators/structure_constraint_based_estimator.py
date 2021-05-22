@@ -66,7 +66,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             max_value = p_value
         print("p value dopo: ", max_value)
 
-   def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
+    def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
                       tot_vars_count: int, parent_indx, child_indx) -> bool:
         """Performs a complete independence test on the directed graphs G1 = {test_child U parent_set}
         G2 = {G1 U test_parent} (added as an additional parent of the test_child).
