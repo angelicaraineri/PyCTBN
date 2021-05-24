@@ -59,13 +59,12 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         self._thumb_threshold = thumb_threshold
         self._cache = Cache()
 
-    def max_p_value(p_value):
+    def max_p_value(p_value: int):
         print("p value da controllare: ", p_value)
         print("p value prima: ", max_value)
         if(p_value > max_value):
             max_value = p_value
         print("p value dopo: ", max_value)
-        return max_value
     
     def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
                       tot_vars_count: int, parent_indx, child_indx) -> bool:
@@ -138,7 +137,8 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                     print("dentro flase")
                     return  False
                 else:
-                    max_ = max_p_value(results[1])                  
+                    print(type(results[1]))
+                    max_p_value(results[1])                  
 
         return True
 
