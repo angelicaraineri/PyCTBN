@@ -59,7 +59,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         self._thumb_threshold = thumb_threshold
         self._cache = Cache()
 
-    def max_p_value(p_value: float):
+    def max_p_value(self, p_value: float):
         print("p value da controllare: ", p_value)
         print("p value prima: ", max_value)
         if(p_value > max_value):
@@ -138,7 +138,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                     return  False
                 else:
                     print(type(results[1].item()))
-                    max_p_value(results[1].item())                  
+                    self.max_p_value(results[1].item())                  
 
         return True
 
