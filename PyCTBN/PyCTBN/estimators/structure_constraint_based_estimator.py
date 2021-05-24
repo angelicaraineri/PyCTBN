@@ -27,7 +27,7 @@ import concurrent.futures
 import multiprocessing
 from multiprocessing import Pool
 
-max_value = -math.inf
+global max_value = -math.inf
 
 class StructureConstraintBasedEstimator(StructureEstimator):
     """
@@ -139,7 +139,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                 else:
                     print(type(results[1].item()))
                     self.max_p_value(results[1].item())                  
-
+                    print(max_value)
         return True
 
     def independence_test(self, child_states_numb: int, cim1: ConditionalIntensityMatrix,
