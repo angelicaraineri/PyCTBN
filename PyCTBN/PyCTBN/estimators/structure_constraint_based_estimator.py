@@ -27,7 +27,7 @@ import concurrent.futures
 import multiprocessing
 from multiprocessing import Pool
 
-global max_value = -math.inf
+max_value = -math.inf
 
 class StructureConstraintBasedEstimator(StructureEstimator):
     """
@@ -60,6 +60,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         self._cache = Cache()
 
     def max_p_value(self, p_value: float):
+        global max_value
         print("p value da controllare: ", p_value)
         print("p value prima: ", max_value)
         if(p_value > max_value):
