@@ -52,7 +52,6 @@ class StructureConstraintBasedEstimator(StructureEstimator):
 
     def __init__(self, sample_path: SamplePath, exp_test_alfa: float, chi_test_alfa: float,known_edges: typing.List= [],
                  thumb_threshold:int = 25):
-        print("dentro CIAO")
         super().__init__(sample_path,known_edges)
         self._exp_test_sign = exp_test_alfa
         self._chi_test_alfa = chi_test_alfa
@@ -86,8 +85,6 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :return: True iff test_child and test_parent are independent given the sep_set parent_set. False otherwise
         :rtype: bool
         """
-
-        print("dentro complete")
         p_set = parent_set[:]
         complete_info = parent_set[:]
         complete_info.append(test_child)
@@ -135,12 +132,10 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             for cim2 in cond_cims:
                 results = self.independence_test(child_states_numb, cim1, cim2, thumb_value, parent_indx, child_indx)
                 if not results[0]:
-                    print("dentro flase")
                     return  False
                 else:
                     print(type(results[1].item()))
-                    self.max_p_value(results[1].item())                  
-                    print(max_value)
+                    self.max_p_value(results[1].item())                             
         return True
 
     def independence_test(self, child_states_numb: int, cim1: ConditionalIntensityMatrix,
@@ -158,8 +153,6 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :return: True iff both tests do NOT reject the null hypothesis of independence. False otherwise.
         :rtype: bool
         """
-
-        print("dentro indip")
 
         M1 = cim1.state_transition_matrix
         M2 = cim2.state_transition_matrix
@@ -186,7 +179,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             Chi = np.sum(np.power(Ks[val] * M2_no_diag[val] - Ls[val] *M1_no_diag[val], 2) /
                          (M1_no_diag[val] + M2_no_diag[val]))
             if Chi > chi_2_quantile:
-                return False, math.inf
+                return False, -math.inf
         return True, F_stats[val]
         
     def compute_thumb_value(self, parent_val, child_val, parent_set_vals):
@@ -201,7 +194,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :return: the thumb value for the current independence test
         :rtype: int
         """
-        print("denro compute_tumb")
+    
         df = (child_val - 1) ** 2
         df = df * parent_val
         for v in parent_set_vals:
@@ -214,7 +207,6 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :param var_id: the node label of the test child
         :type var_id: string
         """
-        print("denro one_ite")
         optimizer_obj = ConstraintBasedOptimizer(
                                                             node_id = var_id,
                                                             structure_estimator = self,
@@ -232,7 +224,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :type processes_number: int, optional
         """
 
-        print("dentro ctpc_algo")
+    
         ctpc_algo = self.one_iteration_of_CTPC_algorithm
         total_vars_numb = self._sample_path.total_variables_count
 
@@ -275,13 +267,13 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         """
         Compute the constraint-based algorithm to find the optimal structure
 
-        :param disable_multiprocessing: true if you desire to disable the multiprocessing operations, default to False
+    
+    :param disable_multiprocessing: true if you desire to disable the multiprocessing operations, default to False
         :type disable_multiprocessing: Boolean, optional
         :param processes_number: if disable_multiprocessing is false indicates 
         the maximum number of process; if None it will be automatically set, default to None
         :type processes_number: int, optional
         """
-        print("dentro estimate prima volta")
         return self.ctpc_algorithm(disable_multiprocessing=disable_multiprocessing,
                                     processes_number=processes_number)
 
