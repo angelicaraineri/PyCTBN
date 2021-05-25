@@ -72,7 +72,8 @@ class ConstraintBasedOptimizer(Optimizer):
                 if self.structure_estimator._removable_edges_matrix[i][j]:
                     S = StructureEstimator.generate_possible_sub_sets_of_size(u, b, test_parent)
                     for parents_set in S:
-	                    if self.structure_estimator.complete_test(test_parent, self.node_id, parents_set, child_states_numb, self.tot_vars_count,i,j):
+                            results = self.structure_estimator.complete_test(test_parent, self.node_id, parents_set, child_states_numb, self.tot_vars_count,i,j):
+	                    if results[0]:
 	                        graph.remove_edges([(test_parent, self.node_id)])
 	                        u.remove(test_parent)
 	                        removed = True
