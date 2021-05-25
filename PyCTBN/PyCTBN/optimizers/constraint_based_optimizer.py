@@ -75,9 +75,9 @@ class ConstraintBasedOptimizer(Optimizer):
                         results = self.structure_estimator.complete_test(test_parent, self.node_id, parents_set, child_states_numb, self.tot_vars_count,i,j)
                         if results[0]:
                             graph.remove_edges([(test_parent, self.node_id)])
-	                    u.remove(test_parent)
-	                    removed = True
-	                    break
+                            u.remove(test_parent)
+                            removed = True
+                            break
                 if not removed:
                     parent_indx += 1
             b += 1
