@@ -155,7 +155,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         exp_alfa = self._exp_test_sign
         print(exp_alfa)
         for val in range(0, child_states_numb):
-            p_value = f_dist.cdf(F_stats, r1s, r2s)
+            p_value = f_dist.cdf(F_stats[val], r1s[val], r2s[val])
             p1 = max(p_value, 1- p_value)
             print("p1 ", p1)
             print("minore di ", 1- exp_alfa/2)
@@ -164,7 +164,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
                     F_stats[val] > f_dist.ppf(1 - exp_alfa / 2, r1s[val], r2s[val]):
                 return False, array_p_value
-            exit()
+            
         M1_no_diag = M1[~np.eye(M1.shape[0], dtype=bool)].reshape(M1.shape[0], -1)
         M2_no_diag = M2[~np.eye(M2.shape[0], dtype=bool)].reshape(
             M2.shape[0], -1)
