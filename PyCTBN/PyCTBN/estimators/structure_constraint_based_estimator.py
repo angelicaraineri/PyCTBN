@@ -155,7 +155,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         exp_alfa = self._exp_test_sign
         print(exp_alfa)
         for val in range(0, child_states_numb):
-            p_value = f_dist.cdf(F_stats[val], r1s[val], r2s[val])
+            p_value = f_dist.cdf(F_stats, r1s, r2s)
             p1 = max(p_value, 1- p_value)
             print("p1 ", p1)
             print("minore di ", 1- exp_alfa/2)
