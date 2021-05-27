@@ -153,13 +153,22 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                 return False, array_p_value
         F_stats = C2.diagonal() / C1.diagonal()
         exp_alfa = self._exp_test_sign
-        print(exp_alfa)
+       
         for val in range(0, child_states_numb):
+            print("INIZIO")
+            print("PROVA TUTTO SPECIFICO")
             p_value = f_dist.cdf(F_stats[val], r1s[val], r2s[val])
-            p1 = max(p_value, 1- p_value)
-            print("p1 ", p1)
+            print("P_value ", p_value)
+            p = max(p_value, 1- p_value)
+            print("p max ", p)
             print("minore di ", 1- exp_alfa/2)
-            print("p_value ", p_value)
+
+            print("PROVA F GENERICA")
+            p_value1 = f_dist.cdf(F_stats, r1s[val], r2s[val])
+            print("P_value ", p_value1)
+            p = max(p_value1, 1- p_value1)
+            print("p max ", p1)
+            
             array_p_value.append(p_value)
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
                     F_stats[val] > f_dist.ppf(1 - exp_alfa / 2, r1s[val], r2s[val]):
