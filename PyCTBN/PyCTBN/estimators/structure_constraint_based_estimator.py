@@ -56,14 +56,6 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         self._chi_test_alfa = chi_test_alfa
         self._thumb_threshold = thumb_threshold
         self._cache = Cache()
-
-    def max_p_value(self, p_value: float):
-        global max_value
-        print("p value da controllare: ", p_value)
-        print("p value prima: ", max_value)
-        if(p_value > max_value):
-            max_value = p_value
-        print("p value dopo: ", max_value)
     
     def complete_test(self, test_parent: str, test_child: str, parent_set: typing.List, child_states_numb: int,
                       tot_vars_count: int, parent_indx, child_indx) -> bool:
@@ -162,6 +154,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                 self._removable_edges_matrix[parent_indx][child_indx] = False
                 return False, array_p_value
         F_stats = C2.diagonal() / C1.diagonal()
+        print(F_stats)
         exp_alfa = self._exp_test_sign
         for val in range(0, child_states_numb):
             p_value = f_dist.cdf(F_stats, r1s[val], r2s[val])
