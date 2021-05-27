@@ -22,8 +22,6 @@ from ..optimizers.constraint_based_optimizer import ConstraintBasedOptimizer
 
 import concurrent.futures
 
-
-
 import multiprocessing
 from multiprocessing import Pool
 
@@ -154,11 +152,15 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                 self._removable_edges_matrix[parent_indx][child_indx] = False
                 return False, array_p_value
         F_stats = C2.diagonal() / C1.diagonal()
-        print(F_stats)
         exp_alfa = self._exp_test_sign
         for val in range(0, child_states_numb):
-            print(val)
             p_value = f_dist.cdf(F_stats, r1s[val], r2s[val])
+            p1 = max(p_value[0], 1- p_value[0])
+            p2 = max(p_value[1], 1- p_value[1])
+            print("p1 ", p1)
+            print("p2", p2)
+            print("minore di ", 1- exp_alfa/2)
+
             print("p_value ", p_value)
             array_p_value.append(p_value)
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
