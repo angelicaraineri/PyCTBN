@@ -164,7 +164,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         F_stats = C2.diagonal() / C1.diagonal()
         exp_alfa = self._exp_test_sign
         for val in range(0, child_states_numb):
-            p_value = f_dist.cdf(F, r1s[val], r2s[val])
+            p_value = f_dist.cdf(F_stats, r1s[val], r2s[val])
             print("p_value ", p_value)
             array_p_value.append(p_value)
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
