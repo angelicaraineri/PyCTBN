@@ -160,12 +160,12 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             print("p1 ", p1)
             print("p2", p2)
             print("minore di ", 1- exp_alfa/2)
-
             print("p_value ", p_value)
             array_p_value.append(p_value)
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
                     F_stats[val] > f_dist.ppf(1 - exp_alfa / 2, r1s[val], r2s[val]):
                 return False, array_p_value
+            exit()
         M1_no_diag = M1[~np.eye(M1.shape[0], dtype=bool)].reshape(M1.shape[0], -1)
         M2_no_diag = M2[~np.eye(M2.shape[0], dtype=bool)].reshape(
             M2.shape[0], -1)
