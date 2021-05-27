@@ -27,7 +27,6 @@ import concurrent.futures
 import multiprocessing
 from multiprocessing import Pool
 
-max_value = -math.inf
 
 class StructureConstraintBasedEstimator(StructureEstimator):
     """
@@ -132,11 +131,9 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             for cim2 in cond_cims:
                 results = self.independence_test(child_states_numb, cim1, cim2, thumb_value, parent_indx, child_indx)
                 if not results[0]:
-                    return  False
-                else:
-                    print(type(results[1].item()))
-                    self.max_p_value(results[1].item())                             
-        return True
+                    return  False, results[1]
+                                             
+        return True, results[1]
 
     def independence_test(self, child_states_numb: int, cim1: ConditionalIntensityMatrix,
                           cim2: ConditionalIntensityMatrix, thumb_value: float, parent_indx, child_indx) -> bool:
@@ -160,15 +157,19 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         r2s = M2.diagonal()
         C1 = cim1.cim
         C2 = cim2.cim
+        array_p_value = []
         if child_states_numb > 2 and (np.sum(np.diagonal(M1)) / thumb_value) < self._thumb_threshold:
                 self._removable_edges_matrix[parent_indx][child_indx] = False
-                return False
+                return False, array_p_value
         F_stats = C2.diagonal() / C1.diagonal()
         exp_alfa = self._exp_test_sign
         for val in range(0, child_states_numb):
+            p_value = f_dist.cdf(F, r1s[val], r2s[val])
+            print("p_value ", p_value)
+            array_p_value.append(p_value)
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
                     F_stats[val] > f_dist.ppf(1 - exp_alfa / 2, r1s[val], r2s[val]):
-                return False
+                return False, array_p_value
         M1_no_diag = M1[~np.eye(M1.shape[0], dtype=bool)].reshape(M1.shape[0], -1)
         M2_no_diag = M2[~np.eye(M2.shape[0], dtype=bool)].reshape(
             M2.shape[0], -1)
@@ -179,8 +180,8 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             Chi = np.sum(np.power(Ks[val] * M2_no_diag[val] - Ls[val] *M1_no_diag[val], 2) /
                          (M1_no_diag[val] + M2_no_diag[val]))
             if Chi > chi_2_quantile:
-                return False, -math.inf
-        return True, F_stats[val]
+                return False, array_p_value
+        return True, array_p_value
         
     def compute_thumb_value(self, parent_val, child_val, parent_set_vals):
         """Compute the value to test against the thumb_threshold.
