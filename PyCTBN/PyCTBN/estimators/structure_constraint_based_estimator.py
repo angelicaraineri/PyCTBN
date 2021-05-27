@@ -166,7 +166,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
             print("PROVA F GENERICA")
             p_value1 = f_dist.cdf(F_stats, r1s[val], r2s[val])
             print("P_value ", p_value1)
-            p = max(p_value1, 1- p_value1)
+            p1 = max(max(p_value1[0], 1- p_value1[0]), max (p_value1[1], 1-p_value1[1]))
             print("p max ", p1)
             
             array_p_value.append(p_value)
