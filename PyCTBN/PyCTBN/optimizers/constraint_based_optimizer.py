@@ -88,5 +88,4 @@ class ConstraintBasedOptimizer(Optimizer):
                     parent_indx += 1
             b += 1
         self.structure_estimator._cache.clear()
-        print("ARRAY TOTAL ", p_array)
         return graph.edges, p_array
