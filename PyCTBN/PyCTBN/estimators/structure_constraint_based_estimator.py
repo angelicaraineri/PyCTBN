@@ -140,7 +140,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         :return: True iff both tests do NOT reject the null hypothesis of independence. False otherwise.
         :rtype: bool
         """
-
+        
         M1 = cim1.state_transition_matrix
         M2 = cim2.state_transition_matrix
         r1s = M1.diagonal()
@@ -153,27 +153,21 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                 return False, array_p_value
         F_stats = C2.diagonal() / C1.diagonal()
         exp_alfa = self._exp_test_sign
-       
+        #print("Valori f stats: " , F_stats)
         for val in range(0, child_states_numb):
-            print("INIZIO")
-            print("PROVA TUTTO SPECIFICO")
-            p_value = f_dist.cdf(F_stats[val], r1s[val], r2s[val])
-            print("P_value ", p_value)
-            p = max(p_value, 1- p_value)
-            print("p max ", p)
-            print("minore di ", 1- exp_alfa/2)
-
-            print("PROVA F GENERICA")
-            p_value1 = f_dist.cdf(F_stats, r1s[val], r2s[val])
-            print("P_value ", p_value1)
-            p1 = max(max(p_value1[0], 1- p_value1[0]), max (p_value1[1], 1-p_value1[1]))
-            print("p max ", p1)
-            
-            array_p_value.append(p_value)
+            #print(" ")
+            p_values = f_dist.cdf(F_stats, r1s[val], r2s[val])
+            #print("p values: ", p_values)
+            for i in range(len(p_values)):
+                p_max = max(p_values[i], 1 - p_values[i])
+                array_p_value.append(p_max)
+                #print("P value max per valore ", p_values[i], ": ", p_max)
+                #print(array_p_value)
+                        
             if F_stats[val] < f_dist.ppf(exp_alfa / 2, r1s[val], r2s[val]) or \
                     F_stats[val] > f_dist.ppf(1 - exp_alfa / 2, r1s[val], r2s[val]):
                 return False, array_p_value
-            
+        
         M1_no_diag = M1[~np.eye(M1.shape[0], dtype=bool)].reshape(M1.shape[0], -1)
         M2_no_diag = M2[~np.eye(M2.shape[0], dtype=bool)].reshape(
             M2.shape[0], -1)
@@ -216,6 +210,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
                                                             node_id = var_id,
                                                             structure_estimator = self,
                                                             tot_vars_count = tot_vars_count)
+        
         return optimizer_obj.optimize_structure()
 
     
@@ -228,9 +223,8 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         the maximum number of process; if None it will be automatically set, default to None
         :type processes_number: int, optional
         """
-
-    
         ctpc_algo = self.one_iteration_of_CTPC_algorithm
+    
         total_vars_numb = self._sample_path.total_variables_count
 
         n_nodes= len(self._nodes)
@@ -249,13 +243,22 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         if disable_multiprocessing:
             print("DISABLED")
             cpu_count = 1
-            list_edges_partial = [ctpc_algo(n,total_vars_numb) for n in self._nodes]
+            list_edges = [ctpc_algo(n,total_vars_numb) for n in self._nodes]
+            list_edges_partial = []
+            p_values = []
+            
+            for n in range(len(list_edges)):
+                list_edges_partial.append(list_edges[n][0])
+                p_values.append(list_edges[n][1])
+            
+        
         else:
             if processes_number is not None and cpu_count > processes_number:
                 cpu_count = processes_number
 
             print(f"CPU COUNT: {cpu_count}")
             with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_count) as executor:
+                
                 list_edges_partial = executor.map(ctpc_algo,
                                                                  self._nodes,
                                                                  total_vars_numb_array)
@@ -265,7 +268,7 @@ class StructureConstraintBasedEstimator(StructureEstimator):
         self._complete_graph = nx.DiGraph()
         self._complete_graph.add_edges_from(edges)
 
-        return edges
+        return edges, p_values
 
         
     def estimate_structure(self, disable_multiprocessing:bool=False, processes_number:int= None):

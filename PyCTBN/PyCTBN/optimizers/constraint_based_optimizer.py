@@ -29,6 +29,7 @@ class ConstraintBasedOptimizer(Optimizer):
     :param tot_vars_count: number of variables in the dataset
     :type tot_vars_count: int
     """
+    
     def __init__(self,
                 node_id:str,
                 structure_estimator: StructureEstimator,
@@ -37,10 +38,14 @@ class ConstraintBasedOptimizer(Optimizer):
         """
         Constructor
         """
+        
         super().__init__(node_id, structure_estimator)
         self.tot_vars_count = tot_vars_count
-        
-
+            
+    def build_p_array(self, p_value:list):
+        global array_p
+        array_p.append(p_value)
+        return array_p
 
     def optimize_structure(self):
         """
@@ -49,10 +54,9 @@ class ConstraintBasedOptimizer(Optimizer):
         :return: the estimated structure for the node
         :rtype: List
         """
-        print("##################TESTING VAR################", self.node_id)
-
+        print("##################TESTING VAR################", self.node_id)    
         graph = NetworkGraph(self.structure_estimator._sample_path.structure)
-
+        p_array = []
         other_nodes =  [node for node in self.structure_estimator._sample_path.structure.nodes_labels if node != self.node_id]
         
         for possible_parent in other_nodes:
@@ -73,6 +77,8 @@ class ConstraintBasedOptimizer(Optimizer):
                     S = StructureEstimator.generate_possible_sub_sets_of_size(u, b, test_parent)
                     for parents_set in S:
                         results = self.structure_estimator.complete_test(test_parent, self.node_id, parents_set, child_states_numb, self.tot_vars_count,i,j)
+                        
+                        p_array.append(results[1])
                         if results[0]:
                             graph.remove_edges([(test_parent, self.node_id)])
                             u.remove(test_parent)
@@ -82,4 +88,5 @@ class ConstraintBasedOptimizer(Optimizer):
                     parent_indx += 1
             b += 1
         self.structure_estimator._cache.clear()
-        return graph.edges
+        print("ARRAY TOTAL ", p_array)
+        return graph.edges, p_array
